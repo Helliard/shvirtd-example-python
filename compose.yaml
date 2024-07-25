@@ -1,0 +1,36 @@
+version: '3.8'
+include:
+  - proxy.yaml
+services:
+  db:
+    image: mysql:8
+    hostname: db
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file: ".env"
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      backend:
+        ipv4_address: 172.20.0.10
+  web:
+    image: cr.yandex/crpep1l77nokqkb838a7/app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=app
+      - DB_PASSWORD=QwErTy1234
+      - DB_NAME=virtd
+    depends_on:
+      - db
+    networks:
+      backend:
+        ipv4_address: 172.20.0.5
+    
+    
